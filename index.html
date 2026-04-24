@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>GTO Trainer 🃏</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f0f;color:#f0f0f0;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:16px}
+.tabs{display:flex;border-bottom:1px solid #2a2a2a;margin-bottom:16px;overflow-x:auto}
+.tab{padding:10px 14px;font-size:13px;font-weight:500;cursor:pointer;color:#666;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0;transition:color .15s}
+.tab.on{color:#4d9cf8;border-bottom-color:#4d9cf8}
+.pane{display:none}.pane.on{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mc{background:#1a1a1a;border-radius:10px;padding:10px 12px}
+.ml{font-size:11px;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
+.mv{font-size:13px;font-weight:500;color:#f0f0f0}
+.bdg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:500}
+.bp{background:#3d2a00;color:#f5a623}.bv{background:#3a0a0a;color:#f87171}
+.bs{background:#0a1f3a;color:#60a5fa}.bd{background:#1a0a3a;color:#a78bfa}
+.crow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.card{width:44px;height:58px;border-radius:6px;border:1.5px solid #333;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0}
+.card.r{color:#f87171}.card.b{color:#f0f0f0}.card.h{background:#0a1f3a;border-color:#4d9cf8}
+.sbox{border-left:3px solid #4d9cf8;padding:12px 14px;margin-bottom:14px;background:#1a1a1a;border-radius:0 10px 10px 0}
+.st{font-size:14px;line-height:1.65;color:#e0e0e0}
+.acts{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.ab{width:100%;min-height:54px;padding:12px 16px;border-radius:10px;border:1.5px solid #2a2a2a;background:#1a1a1a;cursor:pointer;font-size:15px;font-weight:500;color:#e0e0e0;text-align:left;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.ab:active{transform:scale(.98)}
+.ab.sel{border-color:#4d9cf8;background:#0a1f3a;color:#93c5fd}
+.ab.cor{border-color:#34d399;background:#042f1e;color:#6ee7b7}
+.ab.wrg{border-color:#f87171;background:#2d0a0a;color:#fca5a5}
+.ai{width:28px;height:28px;border-radius:50%;background:#252525;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#888;flex-shrink:0}
+.ab.sel .ai{background:#1d4ed8;color:white}
+.ab.cor .ai{background:#059669;color:white}
+.ab.wrg .ai{background:#dc2626;color:white}
+.go{width:100%;padding:16px;border-radius:10px;border:none;background:#1d4ed8;color:white;font-size:16px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s}
+.go:active{opacity:.8}.go:disabled{background:#2a2a2a;color:#555}
+.fb{background:#1a1a1a;border-radius:12px;padding:14px;margin-top:14px;display:none}
+.fb.on{display:block}
+.fht{font-size:15px;font-weight:500;margin-bottom:10px}
+.fht.ok{color:#34d399}.fht.no{color:#f87171}
+.fr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #252525;font-size:13px}
+.fr:last-child{border-bottom:none}
+.fl{color:#666}.fv{font-weight:500;color:#f0f0f0}
+.pb{height:6px;background:#252525;border-radius:3px;margin:5px 0 10px;overflow:hidden}
+.pf{height:100%;border-radius:3px}.pf.ok{background:#059669}.pf.no{background:#dc2626}
+.tip{font-size:13px;color:#888;padding:3px 0 3px 10px;border-left:2px solid #4d9cf8;margin-bottom:4px;line-height:1.5}
+.nb{width:100%;margin-top:12px;padding:14px;border-radius:10px;border:1.5px solid #1d4ed8;background:transparent;color:#60a5fa;font-size:14px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nb:active{background:#0a1f3a}
+.qc{font-size:12px;color:#555;text-align:right;margin-bottom:12px}
+.sdot{width:14px;height:14px;border-radius:50%;background:#2a2a2a;flex-shrink:0}
+.sdot.ok{background:#059669}.sdot.no{background:#dc2626}
+.sbar{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0 14px}
+.cr2{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #252525;font-size:13px}
+.cr2:last-child{border-bottom:none}
+.clb{width:80px;color:#666;flex-shrink:0;font-size:12px}
+.cbw{flex:1;height:7px;background:#252525;border-radius:4px;overflow:hidden}
+.cbf{height:100%;border-radius:4px}
+.cp{width:36px;text-align:right;font-weight:500;font-size:12px}
+.hr2{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #252525;font-size:13px}
+.hr2:last-child{border-bottom:none}
+.ins{border-left:3px solid #059669;padding:10px 14px;margin-bottom:10px;background:#1a1a1a;border-radius:0 10px 10px 0}
+.ins.warn{border-left-color:#f59e0b}.ins.info{border-left-color:#4d9cf8}
+.itl{font-size:13px;font-weight:500;margin-bottom:3px;color:#f0f0f0}
+.ibd{font-size:13px;color:#888;line-height:1.6}
+.sec{font-size:13px;font-weight:500;color:#f0f0f0;margin-bottom:8px;margin-top:8px}
+.lbrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #252525;font-size:14px}
+.lbrow:last-child{border-bottom:none}
+.lbrow.me{background:#0a1f3a;border-radius:10px;margin:4px 0;border:none}
+.lbrank{width:28px;text-align:center;font-size:13px;font-weight:500;color:#555;flex-shrink:0}
+.lbname{flex:1;font-weight:500;color:#f0f0f0;line-height:1.4}
+.lbsub{font-size:11px;color:#555;font-weight:400}
+.lbpct{font-size:16px;font-weight:500;color:#34d399}
+.lbavg{font-size:11px;color:#555;text-align:right;margin-top:1px}
+.namebox{background:#1a1a1a;border-radius:16px;padding:24px 20px;text-align:center}
+.nameinput{width:100%;padding:14px 16px;background:#252525;border:1.5px solid #333;border-radius:10px;color:#f0f0f0;font-size:16px;margin:14px 0 8px;outline:none;text-align:center}
+.nameinput:focus{border-color:#4d9cf8}
+.savebtn{width:100%;padding:15px;border-radius:10px;border:none;background:#1d4ed8;color:white;font-size:16px;font-weight:500;cursor:pointer}
+.savebtn:active{opacity:.8}
+.loading{text-align:center;padding:2rem;color:#555;font-size:14px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid #333;border-top-color:#4d9cf8;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;margin-right:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Setup Screen -->
+<div id="setup">
+  <div style="text-align:center;padding:32px 0 20px">
+    <div style="font-size:48px;margin-bottom:12px">🃏</div>
+    <div style="font-size:22px;font-weight:500;margin-bottom:8px">GTO Trainer</div>
+    <div style="font-size:14px;color:#666;margin-bottom:28px">ฝึก GTO พร้อม Leaderboard real-time</div>
+  </div>
+  <div class="namebox">
+    <div style="font-size:15px;font-weight:500;margin-bottom:4px">ใส่ชื่อของคุณ</div>
+    <div style="font-size:13px;color:#666">ชื่อจะแสดงใน Leaderboard</div>
+    <input class="nameinput" id="nameInput" placeholder="เช่น Jong, Pete, Nan..." maxlength="20" onkeydown="if(event.key==='Enter')saveName()">
+    <button class="savebtn" onclick="saveName()">เริ่มเล่น →</button>
+    <div id="nameErr" style="color:#f87171;font-size:13px;margin-top:8px;min-height:20px"></div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="font-size:14px">
+      <span class="online-dot"></span>
+      <span style="color:#888">สวัสดี </span>
+      <span id="nameDisplay" style="color:#f0f0f0;font-weight:500"></span>
+    </div>
+    <button onclick="changeName()" style="background:none;border:1px solid #333;border-radius:8px;color:#666;font-size:12px;cursor:pointer;padding:5px 10px">เปลี่ยนชื่อ</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="sw('train')">ฝึก GTO</div>
+    <div class="tab" onclick="sw('stats')">สถิติ</div>
+    <div class="tab" onclick="sw('board')">🏆 Leaderboard</div>
+  </div>
+
+  <!-- Train Pane -->
+  <div class="pane on" id="p-train">
+    <div class="qc" id="qc"></div>
+    <div class="g2" id="tbl"></div>
+    <div id="hs">
+      <div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Your hand</div>
+      <div class="crow" id="hh"></div>
+    </div>
+    <div id="bds" style="display:none">
+      <div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Board</div>
+      <div class="crow" id="bc"></div>
+    </div>
+    <div class="sbox"><div class="st" id="sc"></div></div>
+    <div class="acts" id="acts"></div>
+    <button class="go" id="go" disabled onclick="sub()">เลือก Action ก่อน</button>
+    <div class="fb" id="fb">
+      <div class="fht" id="fht"></div>
+      <div id="fbc"></div>
+      <button class="nb" onclick="nxt()">สถานการณ์ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- Stats Pane -->
+  <div class="pane" id="p-stats">
+    <div id="s-top"></div>
+    <div id="s-style"></div>
+    <div id="s-ins"></div>
+    <div class="sec" style="margin-top:4px">Category breakdown</div>
+    <div id="s-cats" style="margin-bottom:14px"></div>
+    <div class="sec">Streak</div>
+    <div class="sbar" id="s-str"></div>
+    <div class="sec">ประวัติล่าสุด</div>
+    <div id="s-hist"></div>
+    <button class="nb" style="margin-top:16px" onclick="sw('train')">กลับไปฝึก →</button>
+  </div>
+
+  <!-- Leaderboard Pane -->
+  <div class="pane" id="p-board">
+    <div class="ins info" style="margin-bottom:14px">
+      <div class="itl">🌐 Real-time Leaderboard</div>
+      <div class="ibd">อัปเดตทุกครั้งที่มีคนตอบ — แชร์ลิงก์ให้เพื่อนเล่นแล้วเปรียบคะแนนกันได้เลย</div>
+    </div>
+    <button onclick="loadBoard()" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid #333;background:transparent;color:#60a5fa;font-size:14px;cursor:pointer;margin-bottom:14px;font-weight:500">
+      ↻ รีเฟรช
+    </button>
+    <div id="lb-content"><div class="loading"><span class="spinner"></span>กำลังโหลด...</div></div>
+  </div>
+</div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+// ============================================================
+// 🔥 FIREBASE CONFIG — แทนค่าของคุณตรงนี้
+// ============================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCNIcyEgBVjnKorprURcKN_MEHJiCtf_7U",
+  authDomain: "gto-poker-23339.firebaseapp.com",
+  databaseURL: "https://gto-poker-23339-default-rtdb.firebaseio.com",
+  projectId: "gto-poker-23339",
+  storageBucket: "gto-poker-23339.firebasestorage.app",
+  messagingSenderId: "1081072741334",
+  appId: "1:1081072741334:web:cb76556825d953d9b8d277"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+};
+// ============================================================
+
+firebase.initializeApp(FIREBASE_CONFIG);
+var db = firebase.database();
+
+// ============================================================
+// DATA
+// ============================================================
+var MT = {
+  too_passive:   {l:"Too Passive",    c:"#f59e0b", bg:"#2d1f00", d:"มี hand ดีแต่ไม่กดดัน — เสีย value"},
+  too_aggressive:{l:"Over-Aggressive",c:"#f87171", bg:"#2d0a0a", d:"Raise มากเกินในจุดที่ควร call/fold"},
+  too_loose:     {l:"Too Loose",      c:"#a78bfa", bg:"#1a0a3a", d:"Call hand ที่ควร fold"},
+  too_tight:     {l:"Too Tight",      c:"#60a5fa", bg:"#0a1f3a", d:"Fold hand ที่ยังมี equity"},
+  hero_call:     {l:"Hero Call",      c:"#34d399", bg:"#042f1e", d:"Call ใหญ่ในจุดที่ควร fold"},
+  sizing:        {l:"Wrong Sizing",   c:"#f59e0b", bg:"#2d1f00", d:"Action ถูกทิศแต่ขนาดผิด"},
+};
+
+var SC = [
+  {pos:"UTG",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Beginner",
+   hero:[{r:"A",s:"♠",c:"b"},{r:"K",s:"♥",c:"r"}],bd:[],cat:"preflop-open",
+   vil:"ทุกคน fold มาถึงคุณ",sit:"ทุกคน fold คุณ UTG ถือ AKo สแตก 100BB",
+   acts:["Fold","Limp (1BB)","Open 2.5BB","Open 3BB"],best:[2,3],bl:"Open 2.5–3BB",gto:95,
+   ex:"AKo เป็น premium hand ต้อง open-raise เสมอ Limp เปิด door ให้ multiway pot เล่นยาก",
+   tips:["AKo = always open-raise","UTG sizing: 2.5–3BB","Never limp premiums"],
+   mm:{0:"too_tight",1:"too_passive",2:null,3:null}},
+  {pos:"BTN",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Beginner",
+   hero:[{r:"A",s:"♠",c:"b"},{r:"A",s:"♦",c:"r"}],bd:[],cat:"preflop-open",
+   vil:"ทุกคน fold มาถึงคุณ",sit:"ทุกคน fold คุณ BTN ถือ AA สแตก 100BB",
+   acts:["Fold","Limp (1BB)","Open 2.5BB","Open 3BB"],best:[2,3],bl:"Open 2.5–3BB",gto:97,
+   ex:"AA ต้อง open-raise เสมอ Limp เปิด door ให้หลาย caller เห็น flop ฟรี ทำให้เล่นยากและเสีย EV มาก",
+   tips:["AA = always raise, never limp","BTN sizing: 2.5–3BB","Limp premium = classic mistake"],
+   mm:{0:"too_tight",1:"too_passive",2:null,3:null}},
+  {pos:"BB",st:"Preflop",stk:"100BB",pot:"1BB",df:"Beginner",
+   hero:[{r:"K",s:"♦",c:"r"},{r:"9",s:"♦",c:"r"}],bd:[],cat:"preflop-defense",
+   vil:"CO raises 2.5BB, BTN/SB fold",sit:"CO raise 2.5BB คุณ BB ถือ K9s diamonds",
+   acts:["Fold","Call 2.5BB","3-Bet 9BB","3-Bet 11BB"],best:[1,2],bl:"Call หรือ 3-Bet",gto:74,
+   ex:"K9s BB vs CO เป็น defend range ชัดเจน มี pot odds + suited equity Fold เป็น too tight",
+   tips:["K9s = clear BB defend","Suited king มี equity ดี","3-bet K9s ได้เป็น semi-bluff"],
+   mm:{0:"too_tight",1:null,2:null,3:"sizing"}},
+  {pos:"CO",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Intermediate",
+   hero:[{r:"Q",s:"♥",c:"r"},{r:"J",s:"♥",c:"r"}],bd:[],cat:"preflop-3bet",
+   vil:"HJ raises 3BB",sit:"HJ raise 3BB คุณ CO ถือ QJs hearts",
+   acts:["Fold","Call 3BB","3-Bet 10BB","3-Bet 12BB"],best:[1],bl:"Call 3BB",gto:76,
+   ex:"QJs vs HJ จาก CO เป็น flat call IP ชัดเจน มี position + suited + implied odds ดี 3-bet QJs vs early position = marginal",
+   tips:["QJs CO vs HJ = call IP","Suited broadway เล่นดีหลัง flop","3-bet QJs vs early pos = too light"],
+   mm:{0:"too_tight",1:null,2:"too_aggressive",3:"too_aggressive"}},
+  {pos:"SB",st:"Flop",stk:"88BB",pot:"14BB",df:"Intermediate",
+   hero:[{r:"A",s:"♣",c:"b"},{r:"K",s:"♣",c:"b"}],bd:[{r:"K",s:"♥",c:"r"},{r:"8",s:"♦",c:"r"},{r:"3",s:"♠",c:"b"}],cat:"flop-bet",
+   vil:"BB checks to you",sit:"SB 3-bet pot Flop K♥8♦3♠ BB check คุณถือ AKo TPTK",
+   acts:["Check","Bet 1/3 pot (~5BB)","Bet 2/3 pot (~9BB)","Bet pot (14BB)"],best:[1,2],bl:"Bet 1/3–2/3 pot",gto:83,
+   ex:"TPTK บน K83 dry board ควร bet เพื่อ value Dry board + 3-bet pot = small-to-mid sizing เพื่อ keep villain in กับ worse hands",
+   tips:["TPTK dry board = bet for value","1/3–2/3 pot keeps villain in","Pot bet = villain folds too much"],
+   mm:{0:"too_passive",1:null,2:null,3:"sizing"}},
+  {pos:"BTN",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Intermediate",
+   hero:[{r:"T",s:"♣",c:"b"},{r:"T",s:"♦",c:"r"}],bd:[],cat:"preflop-4bet",
+   vil:"UTG raises 3BB, SB 3-bets 10BB",sit:"UTG raise 3BB, SB 3-bet 10BB คุณ BTN ถือ TT",
+   acts:["Fold","Call 10BB","4-Bet 28BB","4-Bet 32BB"],best:[0,1],bl:"Fold หรือ Call",gto:70,
+   ex:"TT vs UTG open + SB 3-bet เป็น tough spot SB 3-bet vs UTG range แข็งมาก TT dominated บ่อย 4-bet เป็น mistake ใหญ่",
+   tips:["TT vs 2 players = fold/call, not 4-bet","SB 3-bet vs UTG = very strong","4-bet TT here = stack off awkward"],
+   mm:{0:null,1:null,2:"too_aggressive",3:"too_aggressive"}},
+  {pos:"CO",st:"Flop",stk:"92BB",pot:"9BB",df:"Advanced",
+   hero:[{r:"7",s:"♠",c:"b"},{r:"6",s:"♠",c:"b"}],bd:[{r:"8",s:"♠",c:"b"},{r:"5",s:"♣",c:"b"},{r:"2",s:"♥",c:"r"}],cat:"flop-bet",
+   vil:"BB checks to you",sit:"CO open BB call Flop 8♠5♣2♥ BB check คุณถือ 76ss OESD + backdoor flush",
+   acts:["Check back","Bet 1/3 pot (~3BB)","Bet 2/3 pot (~6BB)","Bet pot (9BB)"],best:[1,2],bl:"Bet 1/3–2/3 pot",gto:78,
+   ex:"76ss บน 852 มี OESD + backdoor nut flush เป็น strong semi-bluff spot ควร bet เพื่อ build pot",
+   tips:["OESD + backdoor flush = semi-bluff","Bet before villain sees free card","1/3–2/3 pot เหมาะกับ connected board"],
+   mm:{0:"too_passive",1:null,2:null,3:"sizing"}},
+  {pos:"BB",st:"Turn",stk:"76BB",pot:"26BB",df:"Advanced",
+   hero:[{r:"J",s:"♦",c:"r"},{r:"T",s:"♦",c:"r"}],bd:[{r:"Q",s:"♦",c:"r"},{r:"9",s:"♣",c:"b"},{r:"3",s:"♥",c:"r"},{r:"2",s:"♦",c:"r"}],cat:"turn-decision",
+   vil:"BTN bets 18BB (2/3 pot)",sit:"Turn Q♦9♣3♥2♦ BTN bet 18BB มาหาคุณ ถือ JTdd straight + flush draw",
+   acts:["Fold","Call 18BB","Raise 46BB","All-in (~76BB)"],best:[2,3],bl:"Raise หรือ All-in",gto:85,
+   ex:"JTdd มี straight (8-Q) + flush draw = monster draw ควร raise/jam เพื่อ max value River อาจ brick ทำให้เสีย equity",
+   tips:["Straight + flush draw = max value now","Don't slowplay บน wet board","Raise before river changes dynamic"],
+   mm:{0:"too_tight",1:"too_passive",2:null,3:null}},
+  {pos:"BTN",st:"River",stk:"58BB",pot:"40BB",df:"Advanced",
+   hero:[{r:"A",s:"♠",c:"b"},{r:"Q",s:"♠",c:"b"}],bd:[{r:"K",s:"♠",c:"b"},{r:"J",s:"♠",c:"b"},{r:"T",s:"♠",c:"b"},{r:"5",s:"♦",c:"r"},{r:"2",s:"♣",c:"b"}],cat:"river-bluff",
+   vil:"BB checks to you",sit:"River K♠J♠T♠5♦2♣ BB check คุณถือ AQss = Royal Flush!",
+   acts:["Check back","Bet 1/3 (~13BB)","Bet 2/3 (~27BB)","All-in (~58BB)"],best:[3],bl:"All-in",gto:92,
+   ex:"AQss บน KJT = Royal Flush = absolute nuts ไม่มีอะไร beat ได้ All-in เป็น only correct play",
+   tips:["Royal Flush = ALWAYS all-in","Nothing beats you here","Villain must call with flush/straight"],
+   mm:{0:"too_passive",1:"too_passive",2:"sizing",3:null}},
+  {pos:"SB",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Expert",
+   hero:[{r:"A",s:"♥",c:"r"},{r:"J",s:"♦",c:"r"}],bd:[],cat:"preflop-3bet",
+   vil:"BTN raises 2.5BB",sit:"BTN raise 2.5BB คุณ SB ถือ AJo",
+   acts:["Fold","Call 2.5BB","3-Bet 9BB","3-Bet 11BB"],best:[0,2,3],bl:"Fold หรือ 3-Bet",gto:68,
+   ex:"AJo SB vs BTN เป็น 3-bet or fold เพราะ OOP flat call แย่มาก มี Ace blocker ทำ 3-bet มี fold equity ดี",
+   tips:["AJo SB = 3-bet or fold","Flat OOP = bad spot","Ace blocker = good 3-bet bluff"],
+   mm:{0:null,1:"too_passive",2:null,3:null}},
+];
+
+var catMap = {
+  'preflop-open':'PF Open','preflop-3bet':'PF 3-Bet','preflop-4bet':'PF 4-Bet',
+  'preflop-defense':'PF Defense','flop-bet':'Flop Bet','flop-check-raise':'Flop CR',
+  'turn-decision':'Turn','river-bluff':'River'
+};
+var LBL = ['A','B','C','D'];
+var cur=0, sel=null, done=false, playerName='', playerId='';
+var hist = [];
+
+// ============================================================
+// INIT
+// ============================================================
+function initApp() {
+  var savedName = localStorage.getItem('gto_name') || '';
+  var savedId   = localStorage.getItem('gto_id')   || '';
+  if (savedName && savedId) {
+    playerName = savedName;
+    playerId   = savedId;
+    loadLocalHistory();
+    startApp();
+  } else {
+    document.getElementById('setup').style.display = 'block';
+    document.getElementById('app').style.display   = 'none';
+  }
+}
+
+function genId() {
+  return 'p_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+function saveName() {
+  var v = document.getElementById('nameInput').value.trim();
+  if (!v) { document.getElementById('nameErr').textContent = 'ใส่ชื่อก่อนนะ!'; return; }
+  document.getElementById('nameErr').textContent = '';
+  playerName = v;
+  playerId   = genId();
+  localStorage.setItem('gto_name', playerName);
+  localStorage.setItem('gto_id',   playerId);
+  loadLocalHistory();
+  startApp();
+}
+
+function changeName() {
+  document.getElementById('setup').style.display = 'block';
+  document.getElementById('app').style.display   = 'none';
+  document.getElementById('nameInput').value = playerName;
+}
+
+function startApp() {
+  document.getElementById('nameDisplay').textContent = playerName;
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('app').style.display   = 'block';
+  render();
+}
+
+// ============================================================
+// LOCAL HISTORY
+// ============================================================
+function loadLocalHistory() {
+  try {
+    var raw = localStorage.getItem('gto_hist_' + playerId);
+    hist = raw ? JSON.parse(raw) : [];
+    cur  = hist.length % SC.length;
+  } catch(e) { hist = []; cur = 0; }
+}
+
+function saveLocalHistory() {
+  try { localStorage.setItem('gto_hist_' + playerId, JSON.stringify(hist)); } catch(e) {}
+}
+
+// ============================================================
+// FIREBASE — SAVE SCORE
+// ============================================================
+function saveToFirebase() {
+  if (!hist.length) return;
+  var n   = hist.length;
+  var ok  = hist.filter(function(h){ return h.ok; }).length;
+  var pct = Math.round(ok / n * 100);
+  var avgG= Math.round(hist.reduce(function(a,h){ return a + (h.ok ? h.gto : 100-h.gto); }, 0) / n);
+
+  // Count mistake types
+  var mistakes = {};
+  hist.filter(function(h){ return !h.ok && h.mt; })
+      .forEach(function(h){ mistakes[h.mt] = (mistakes[h.mt]||0) + 1; });
+  var topMistake = Object.entries(mistakes).sort(function(a,b){ return b[1]-a[1]; })[0];
+
+  var entry = {
+    name:       playerName,
+    ok:         ok,
+    total:      n,
+    pct:        pct,
+    avgGto:     avgG,
+    topMistake: topMistake ? topMistake[0] : null,
+    updatedAt:  firebase.database.ServerValue.TIMESTAMP
+  };
+
+  db.ref('leaderboard/' + playerId).set(entry);
+}
+
+// ============================================================
+// FIREBASE — LOAD LEADERBOARD
+// ============================================================
+function loadBoard() {
+  var el = document.getElementById('lb-content');
+  el.innerHTML = '<div class="loading"><span class="spinner"></span>กำลังโหลด...</div>';
+
+  db.ref('leaderboard').orderByChild('pct').limitToLast(50).once('value')
+    .then(function(snap) {
+      var entries = [];
+      snap.forEach(function(child) { entries.push(child.val()); });
+      entries.sort(function(a,b){ return b.pct - a.pct || b.total - a.total; });
+
+      if (!entries.length) {
+        el.innerHTML = '<div class="loading">ยังไม่มีคะแนน — เป็นคนแรก!</div>';
+        return;
+      }
+
+      var medals = ['🥇','🥈','🥉'];
+      var html = '';
+      entries.forEach(function(e, i) {
+        var isMe = (e.name === playerName);
+        var rank = i < 3 ? medals[i] : (i+1);
+        var mt   = e.topMistake && MT[e.topMistake] ? MT[e.topMistake] : null;
+        html += '<div class="lbrow' + (isMe ? ' me' : '') + '">' +
+          '<div class="lbrank">' + rank + '</div>' +
+          '<div class="lbname">' + e.name +
+            (isMe ? ' <span style="font-size:11px;color:#4d9cf8">(คุณ)</span>' : '') +
+            '<div class="lbsub">' + e.total + ' ข้อ' +
+              (mt ? ' · <span style="color:' + mt.c + '">' + mt.l + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div style="text-align:right">' +
+            '<div class="lbpct">' + e.pct + '%</div>' +
+            '<div class="lbavg">GTO ' + e.avgGto + '%</div>' +
+          '</div>' +
+        '</div>';
+      });
+      el.innerHTML = html;
+    })
+    .catch(function(err) {
+      el.innerHTML = '<div class="loading" style="color:#f87171">โหลดไม่ได้ — ตรวจสอบ Firebase config</div>';
+      console.error(err);
+    });
+}
+
+// ============================================================
+// GAME
+// ============================================================
+function card(c, h) {
+  return '<div class="card ' + c.c + (h ? ' h' : '') + '">' + c.r + c.s + '</div>';
+}
+
+function render() {
+  var s = SC[cur]; done = false; sel = null;
+  document.getElementById('qc').textContent =
+    'Scenario #' + (cur+1) + ' / ' + SC.length + '  ·  ทำแล้ว ' + hist.length + ' ข้อ';
+
+  document.getElementById('tbl').innerHTML =
+    '<div class="mc"><div class="ml">Position</div><div class="mv"><span class="bdg bp">' + s.pos + '</span></div></div>' +
+    '<div class="mc"><div class="ml">Street</div><div class="mv"><span class="bdg bs">' + s.st + '</span></div></div>' +
+    '<div class="mc"><div class="ml">Stack / Pot</div><div class="mv">' + s.stk + ' · ' + s.pot + '</div></div>' +
+    '<div class="mc"><div class="ml">Difficulty</div><div class="mv"><span class="bdg bd">' + s.df + '</span></div></div>';
+
+  document.getElementById('hh').innerHTML = s.hero.map(function(c){ return card(c,true); }).join('');
+  var bd = document.getElementById('bds');
+  if (s.bd.length) {
+    document.getElementById('bc').innerHTML = s.bd.map(function(c){ return card(c,false); }).join('');
+    bd.style.display = 'block';
+  } else { bd.style.display = 'none'; }
+
+  document.getElementById('sc').innerHTML = '<span class="bdg bv">Villain</span> ' + s.vil + '<br><br>' + s.sit;
+  document.getElementById('acts').innerHTML = s.acts.map(function(a,i){
+    return '<button class="ab" id="a'+i+'" onclick="pick('+i+')"><div class="ai">'+LBL[i]+'</div><span>'+a+'</span></button>';
+  }).join('');
+
+  var go = document.getElementById('go');
+  go.disabled = true; go.textContent = 'เลือก Action ก่อน';
+  document.getElementById('fb').classList.remove('on');
+}
+
+function pick(i) {
+  if (done) return; sel = i;
+  document.querySelectorAll('.ab').forEach(function(b,x){ b.classList.toggle('sel', x===i); });
+  var go = document.getElementById('go');
+  go.disabled = false; go.textContent = 'ยืนยัน Action';
+}
+
+function sub() {
+  if (sel === null || done) return; done = true;
+  var s  = SC[cur];
+  var ok = s.best.includes(sel);
+  var mt = ok ? null : (s.mm[sel] || null);
+  hist.push({q:hist.length+1, pos:s.pos, st:s.st, cat:s.cat, df:s.df,
+             ok:ok, chosen:s.acts[sel], best:s.bl, gto:s.gto, mt:mt});
+  saveLocalHistory();
+  saveToFirebase();
+
+  document.querySelectorAll('.ab').forEach(function(b,i){
+    b.classList.remove('sel');
+    if (s.best.includes(i)) b.classList.add('cor');
+    else if (i===sel && !ok) b.classList.add('wrg');
+  });
+
+  var pct = ok ? s.gto : Math.max(5, 100-s.gto);
+  var fht = document.getElementById('fht');
+  fht.className = 'fht ' + (ok ? 'ok' : 'no');
+  fht.textContent = ok ? '✓ ถูกต้อง!  GTO ' + s.gto + '%' : '✗ GTO แนะนำ: ' + s.bl;
+
+  var mh = '';
+  if (!ok && mt && MT[mt]) {
+    var m = MT[mt];
+    mh = '<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 12px;border-radius:8px;background:'+m.bg+';margin:8px 0">' +
+         '<span style="padding:2px 8px;border-radius:20px;font-size:12px;font-weight:500;color:'+m.c+';border:1px solid '+m.c+';white-space:nowrap">'+m.l+'</span>' +
+         '<span style="font-size:13px;color:#999;line-height:1.5">'+m.d+'</span></div>';
+  }
+
+  document.getElementById('fbc').innerHTML =
+    '<div class="fr"><span class="fl">GTO accuracy ของ action นี้</span><span class="fv">' + pct + '%</span></div>' +
+    '<div class="pb"><div class="pf ' + (ok?'ok':'no') + '" style="width:'+pct+'%"></div></div>' +
+    mh +
+    '<div class="fr" style="margin-top:4px"><span class="fl">Best action</span><span class="fv" style="color:#34d399">'+s.bl+'</span></div>' +
+    '<div style="font-size:13px;color:#888;line-height:1.65;padding:8px 0">'+s.ex+'</div>' +
+    s.tips.map(function(t){ return '<div class="tip">'+t+'</div>'; }).join('');
+
+  document.getElementById('go').disabled = true;
+  document.getElementById('go').textContent = 'ตอบแล้ว';
+  document.getElementById('fb').classList.add('on');
+}
+
+function nxt() { cur = (cur+1) % SC.length; render(); window.scrollTo(0,0); }
+
+function sw(t) {
+  document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+  document.querySelectorAll('.pane').forEach(function(x){ x.classList.remove('on'); });
+  document.getElementById('p-'+t).classList.add('on');
+  document.querySelector('.tab[onclick="sw(\''+t+'\')"]').classList.add('on');
+  if (t==='stats') renderStats();
+  if (t==='board') loadBoard();
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function renderStats() {
+  var n = hist.length;
+  if (!n) {
+    document.getElementById('s-top').innerHTML = '<div class="loading">ยังไม่มีข้อมูล — ไปฝึกก่อน!</div>';
+    ['s-style','s-ins','s-cats','s-str','s-hist'].forEach(function(id){ document.getElementById(id).innerHTML=''; });
+    return;
+  }
+  var ok   = hist.filter(function(h){ return h.ok; }).length;
+  var pct  = Math.round(ok/n*100);
+  var avgG = Math.round(hist.reduce(function(a,h){ return a+(h.ok?h.gto:100-h.gto); },0)/n);
+  var cl   = pct>=75?'#34d399':pct>=50?'#f59e0b':'#f87171';
+
+  document.getElementById('s-top').innerHTML =
+    '<div class="g2" style="margin-bottom:14px">' +
+    '<div class="mc"><div class="ml">ทำแล้ว</div><div class="mv">'+n+' ข้อ</div></div>' +
+    '<div class="mc"><div class="ml">ถูก</div><div class="mv" style="color:'+cl+'">'+ok+'/'+n+'</div></div>' +
+    '<div class="mc"><div class="ml">ความแม่น</div><div class="mv" style="color:'+cl+'">'+pct+'%</div></div>' +
+    '<div class="mc"><div class="ml">Avg GTO</div><div class="mv" style="color:'+cl+'">'+avgG+'%</div></div>' +
+    '</div>';
+
+  var errs = hist.filter(function(h){ return !h.ok && h.mt; });
+  var mc   = {};
+  errs.forEach(function(h){ mc[h.mt] = (mc[h.mt]||0)+1; });
+  var sorted = Object.entries(mc).sort(function(a,b){ return b[1]-a[1]; });
+
+  var styleDesc = {
+    too_passive:"คุณเล่น Passive — มี hand ดีแต่ไม่กดดัน เสีย value บ่อย ลองฝึก value bet และ 3-bet strong hands มากขึ้น",
+    too_aggressive:"คุณ Over-Aggressive — raise ในจุดที่ควร call/fold อาจ exploitable ฝึก pot control และ read villain range",
+    too_loose:"คุณเล่น Loose — play too many hands ฝึก tighten range โดยเฉพาะ OOP",
+    too_tight:"คุณเล่น Tight/Nit — fold มากเกินไป ลอง expand defend range และฝึก semi-bluff",
+    hero_call:"คุณ Hero Call บ่อย — ฝึก range reading เมื่อ villain bet big มักหมายถึง strong hand จริงๆ",
+    sizing:"ปัญหา Bet Sizing — action ถูกทิศแต่ขนาดผิด ฝึก board texture: wet = big sizing, dry = small sizing",
+  };
+
+  var styleHtml = '';
+  if (sorted.length) {
+    var top = sorted[0][0]; var m = MT[top];
+    styleHtml = '<div class="sec">สไตล์การเล่นของคุณ</div>' +
+      '<div class="ins warn"><div style="margin-bottom:6px">' +
+      '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;background:'+m.bg+';color:'+m.c+';border:1px solid '+m.c+'">'+m.l+'</span>' +
+      '</div><div class="ibd">'+(styleDesc[top]||m.d)+'</div></div>';
+
+    styleHtml += '<div class="sec" style="margin-top:4px">Mistake pattern</div>' +
+      '<div style="background:#1a1a1a;border-radius:12px;padding:10px 14px;margin-bottom:14px">';
+    sorted.forEach(function(e){
+      var k=e[0]; var cnt=e[1]; var m2=MT[k]; var p=Math.round(cnt/n*100);
+      styleHtml += '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #252525">' +
+        '<span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:'+m2.bg+';color:'+m2.c+';flex-shrink:0">'+m2.l+'</span>' +
+        '<div style="flex:1;height:6px;background:#252525;border-radius:3px;overflow:hidden"><div style="width:'+p+'%;height:100%;background:'+m2.c+';border-radius:3px"></div></div>' +
+        '<span style="font-size:12px;color:#555;flex-shrink:0">'+cnt+'x</span></div>';
+    });
+    styleHtml += '</div>';
+  }
+  document.getElementById('s-style').innerHTML = styleHtml;
+
+  var cats = {};
+  hist.forEach(function(h){ if(!cats[h.cat]) cats[h.cat]={ok:0,t:0}; cats[h.cat].t++; if(h.ok) cats[h.cat].ok++; });
+  var weak   = Object.entries(cats).filter(function(e){ return e[1].ok/e[1].t < 0.5;  }).map(function(e){ return catMap[e[0]]||e[0]; });
+  var strong = Object.entries(cats).filter(function(e){ return e[1].ok/e[1].t >= 1;   }).map(function(e){ return catMap[e[0]]||e[0]; });
+  var insHtml = '';
+  if (strong.length) insHtml += '<div class="ins"><div class="itl">จุดแข็ง</div><div class="ibd">'+strong.join(', ')+' — แม่นดีแล้ว</div></div>';
+  if (weak.length)   insHtml += '<div class="ins warn"><div class="itl">ต้องฝึกเพิ่ม</div><div class="ibd">'+weak.join(', ')+'</div></div>';
+  document.getElementById('s-ins').innerHTML = insHtml;
+
+  document.getElementById('s-cats').innerHTML = Object.entries(cats).map(function(e){
+    var k=e[0]; var v=e[1]; var p=Math.round(v.ok/v.t*100); var c=p>=75?'#34d399':p>=50?'#f59e0b':'#f87171';
+    return '<div class="cr2"><div class="clb">'+(catMap[k]||k)+'</div>' +
+      '<div class="cbw"><div class="cbf" style="width:'+p+'%;background:'+c+'"></div></div>' +
+      '<div class="cp" style="color:'+c+'">'+p+'%</div></div>';
+  }).join('');
+
+  document.getElementById('s-str').innerHTML = hist.map(function(h){
+    return '<div class="sdot '+(h.ok?'ok':'no')+'" title="'+(h.ok?'✓':h.mt||'✗')+'"></div>';
+  }).join('');
+
+  document.getElementById('s-hist').innerHTML = hist.slice(-20).reverse().map(function(h){
+    var m2 = (!h.ok && h.mt && MT[h.mt]) ? MT[h.mt] : null;
+    return '<div class="hr2">' +
+      '<div class="sdot '+(h.ok?'ok':'no')+'" style="margin-top:2px"></div>' +
+      '<div style="flex:1;line-height:1.5"><span style="font-weight:500">#'+h.q+'</span> '+h.st+' · '+h.pos +
+        (m2 ? '<span style="display:inline-block;margin-left:5px;padding:1px 7px;border-radius:20px;font-size:11px;background:'+m2.bg+';color:'+m2.c+'">'+m2.l+'</span>' : '') +
+      '</div>' +
+      '<div style="font-size:12px;color:#555;text-align:right;max-width:110px">'+(h.ok?'✓ OK':h.chosen.slice(0,14))+'</div>' +
+      '</div>';
+  }).join('');
+}
+
+// Start
+initApp();
+</script>
+</body>
+</html>
