@@ -279,7 +279,20 @@ var SC = [
    mm:{0:null,1:"too_passive",2:null,3:null}},
 ];
 
-var catMap =   {pos:"BTN",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Beginner",
+var catMap =   {
+  'preflop-open':'PF Open',
+  'preflop-3bet':'PF 3-Bet',
+  'preflop-4bet':'PF 4-Bet',
+  'preflop-defense':'PF Defense',
+  'flop-bet':'Flop Bet',
+  'flop-check-raise':'Flop CR',
+  'turn-decision':'Turn',
+  'turn-aggression':'Turn Aggr',
+  'river-bluff':'River'
+};
+
+
+{pos:"BTN",st:"Preflop",stk:"100BB",pot:"1.5BB",df:"Beginner",
    hero:[{r:"K",s:"♠",c:"b"},{r:"K",s:"♥",c:"r"}],bd:[],cat:"preflop-open",
    vil:"ทุกคน fold มาถึงคุณ",sit:"ทุกคน fold คุณ BTN ถือ KK สแตก 100BB",
    acts:["Fold","Limp (1BB)","Open 2.5BB","Open 3BB"],best:[2,3],bl:"Open 2.5–3BB",gto:96,
